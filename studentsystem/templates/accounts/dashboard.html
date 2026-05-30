@@ -1,0 +1,20 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>{{ user.get_full_name|default:user.username }} Dashboard</h1>
+    <p>Your role is {{ user.get_role_display }}.</p>
+    <div class="grid">
+        <a class="card" href="{% url 'learning:subject_list' %}">
+            <h2>Learning</h2>
+            <p>View subjects, materials, and assignments.</p>
+        </a>
+        <a class="card" href="{% url 'chatbot:chat' %}">
+            <h2>Student Chatbot</h2>
+            <p>Ask a study topic and read a detailed answer.</p>
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -22,7 +22,7 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     def is_admin_role(self):
-        return self.role == self.Roles.ADMIN
+        return self.role in [self.Roles.ADMIN, self.Roles.SUPER_ADMIN] or self.is_superuser
 
     def __str__(self):
         return f"{self.get_full_name() or self.username}  ({self.role})"

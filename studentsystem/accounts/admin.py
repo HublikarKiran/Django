@@ -14,18 +14,20 @@ class EnterpriseUserAdmin(UserAdmin):
     ordering = ('created_at',)
 
     fieldsets = UserAdmin.fieldsets + (
-        "Enterprise Profile",
-        {
+        ("Enterprise Profile", {
             'fields': (
                 'role',
                 'phone_number',
                 'profile_picture',
                 'is_verified',
             )
-        },
+        }),
         ("Audit", {"fields": ("created_at", "updated_at")})
     )
     readonly_fields = ('created_at', 'updated_at')
+
+
+admin.site.register(User, EnterpriseUserAdmin)
 
 
 @admin.register(StudentProfile)

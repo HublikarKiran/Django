@@ -1,0 +1,35 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}Study Chatbot{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Study Chatbot</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label for="question">Search a topic</label>
+            <textarea id="question" name="question" placeholder="Example: Explain DBMS normalization" required></textarea>
+        </p>
+        <button class="primary" type="submit">Ask</button>
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Recent Chats</h2>
+    <div class="chat-window">
+        {% for item in chat_messages %}
+            <div class="chat-message">
+                <strong>You:</strong>
+                <p>{{ item.question }}</p>
+            </div>
+            <div class="chat-message answer">
+                <strong>Answer:</strong>
+                <pre>{{ item.answer }}</pre>
+            </div>
+        {% empty %}
+            <p>No chat history yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

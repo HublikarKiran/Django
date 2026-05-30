@@ -1,0 +1,39 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}{{ subject.name }}{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>{{ subject.name }}</h1>
+    <p>Code: {{ subject.code }}</p>
+    <p>{{ subject.description|default:'No description added.' }}</p>
+    {% if user.is_admin_role %}
+        <div class="actions">
+            <a class="button" href="{% url 'learning:subject_update' subject.pk %}">Edit</a>
+            <a class="button danger" href="{% url 'learning:subject_delete' subject.pk %}">Delete</a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h2>Materials</h2>
+    <ul>
+        {% for material in subject.materials.all %}
+            <li><a href="{{ material.file.url }}">{{ material.title }}</a></li>
+        {% empty %}
+            <li>No materials for this subject.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section class="panel">
+    <h2>Assignments</h2>
+    <ul>
+        {% for assignment in subject.assignments.all %}
+            <li><a href="{% url 'learning:assignment_detail' assignment.pk %}">{{ assignment.title }}</a></li>
+        {% empty %}
+            <li>No assignments for this subject.</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Edit Student</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>User Details</h2>
+        {{ user_form.as_p }}
+        <h2>Student Profile</h2>
+        {{ profile_form.as_p }}
+        <button class="primary" type="submit">Save</button>
+    </form>
+</section>
+{% endblock %}

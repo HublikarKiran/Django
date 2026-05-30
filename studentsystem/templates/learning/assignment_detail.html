@@ -1,0 +1,32 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}{{ assignment.title }}{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>{{ assignment.title }}</h1>
+    <p>Subject: {{ assignment.subject }}</p>
+    <p>Due date: {{ assignment.due_date }}</p>
+    <p>{{ assignment.description|default:'No description.' }}</p>
+    {% if assignment.file %}
+        <p><a href="{{ assignment.file.url }}">Download assignment file</a></p>
+    {% endif %}
+    <div class="actions">
+        {% if user.is_admin_role %}
+            <a class="button" href="{% url 'learning:assignment_update' assignment.pk %}">Edit</a>
+            <a class="button danger" href="{% url 'learning:assignment_delete' assignment.pk %}">Delete</a>
+        {% else %}
+            <a class="button primary" href="{% url 'learning:assignment_submit' assignment.pk %}">Submit Answer</a>
+        {% endif %}
+    </div>
+</section>
+
+{% if submission %}
+<section class="panel">
+    <h2>Your Submission</h2>
+    <p>Submitted at: {{ submission.submitted_at }}</p>
+    <p>Grade: {{ submission.grade|default:'Not graded yet' }}</p>
+    <p>Feedback: {{ submission.feedback|default:'No feedback yet' }}</p>
+</section>
+{% endif %}
+{% endblock %}

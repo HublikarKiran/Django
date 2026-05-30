@@ -18,7 +18,7 @@ class StudyMaterialsForm(forms.ModelForm):
 
 class AssignmentForm(forms.ModelForm):
 
-    due_data = forms.DateTimeField(
+    due_date = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         input_formats=['%Y-%m-%dT%H:%M'],
     )
@@ -32,5 +32,5 @@ class AssignmentForm(forms.ModelForm):
 class AssignmentSubmissionForm(forms.ModelForm):
     class Meta:
         model = AssignmentSubmission
-        fields = ['submission_file', 'answer_text']
+        fields = ['file', 'answer_text']
         widgets = {"answer_text": forms.Textarea(attrs={"rows": 6})}

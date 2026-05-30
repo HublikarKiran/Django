@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="{% url 'home' %}">Student System</a>
+        <button class="menu-button" type="button" data-menu-button>Menu</button>
+        <nav class="nav" data-menu>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                <a href="{% url 'learning:subject_list' %}">Learning</a>
+                <a href="{% url 'chatbot:chat' %}">Chatbot</a>
+                {% if user.is_admin_role %}
+                    <a href="{% url 'accounts:user_list' %}">Users</a>
+                    <a href="/api/">API</a>
+                {% endif %}
+                <a href="{% url 'accounts:logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">Login</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main class="page">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

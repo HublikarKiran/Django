@@ -1,0 +1,15 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Confirm Delete</h1>
+    <p>Are you sure you want to delete {{ object }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class="primary" type="submit">Yes, Delete</button>
+        <a class="button" href="{% url cancel_url %}">Cancel</a>
+    </form>
+</section>
+{% endblock %}

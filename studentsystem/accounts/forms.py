@@ -1,10 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, UserCreationForm
 
 from .models import StudentProfile, User
 
 
-class LoginForm(forms.Form):
+class LoginForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(
@@ -41,7 +41,7 @@ class RegistrationForm(UserCreationForm):
 class StudentCreateForm(UserCreationForm):
     roll_number = forms.CharField(max_length=30)
     course = forms.CharField(max_length=100)
-    semester = forms.CharField(min_value=1, max_length=20)
+    semester = forms.CharField(max_length=20)
     skills = forms.CharField(widget=forms.Textarea(
         attrs={'class': 'form-control'}), required=False)
     bio = forms.CharField(widget=forms.Textarea(
@@ -80,17 +80,72 @@ class StudentCreateForm(UserCreationForm):
             )
         return user
 
-class StudentUserUpdateForm(UserChangeForm):
+
+class UserOnboardingForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "role",
+            "is_verified",
+            "password1",
+            "password2",
+        )
+        widgets = {
+            "username": forms.TextInput(attrs={'class': 'form-control'}),
+            "email": forms.EmailInput(attrs={'class': 'form-control'}),
+            "first_name": forms.TextInput(attrs={'class': 'form-control'}),
+            "last_name": forms.TextInput(attrs={'class': 'form-control'}),
+            "phone_number": forms.TextInput(attrs={'class': 'form-control'}),
+            "role": forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class UserProfileUpdateForm(UserChangeForm):
+    password = None
 
     class Meta:
+        model = User
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "role",
+            "is_verified",
+            "is_active",
+        )
+
+
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
         model = StudentProfile
-        fields=(
+        fields = (
             "roll_number",
             "course",
             "semester", 
             "skills",
-            "bio",)
+            "bio",
+        )
         widgets = {
             "skills": forms.Textarea(attrs={'class': 'form-control'}),
             "bio": forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+
+class StudentUserUpdateForm(UserProfileUpdateForm):
+    class Meta(UserProfileUpdateForm.Meta):
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "is_verified",
+            "is_active",
+        )

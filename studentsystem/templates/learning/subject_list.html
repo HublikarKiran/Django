@@ -1,0 +1,27 @@
+{% extends 'includes/base.html' %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Subjects</h1>
+    <div class="actions">
+        <a class="button" href="{% url 'learning:material_list' %}">Materials</a>
+        <a class="button" href="{% url 'learning:assignment_list' %}">Assignments</a>
+        {% if user.is_admin_role %}
+            <a class="button primary" href="{% url 'learning:subject_create' %}">Add Subject</a>
+        {% endif %}
+    </div>
+    <div class="grid">
+        {% for subject in subjects %}
+            <a class="card" href="{% url 'learning:subject_detail' subject.pk %}">
+                <h2>{{ subject.name }}</h2>
+                <p>{{ subject.code }}</p>
+                <p>{{ subject.description|default:'No description' }}</p>
+            </a>
+        {% empty %}
+            <p>No subjects yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

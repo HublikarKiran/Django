@@ -3,10 +3,23 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from learning.models import Assignment, AssignmentSubmission, StudyMaterial, Subject
+from learning.models import Assignment, AssignmentSubmission, StudyMaterials, Subject
 
-from .forms import LoginForm, StudentCreateForm, StudentProfileForm, StudentUserUpdateForm
+from .forms import (
+    LoginForm,
+    StudentCreateForm,
+    StudentProfileForm,
+    StudentUserUpdateForm,
+    UserOnboardingForm,
+    UserProfileUpdateForm,
+)
 from .models import StudentProfile, User
+
+
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard')
+    return render(request, 'accounts/home.html')
 
 
 def login_view(request):
@@ -31,7 +44,9 @@ def logout_view(request):
 def dashboard_redirect(request):
     if request.user.is_admin_role():
         return redirect('accounts:admin_dashboard')
-    return redirect('accounts:student_dashboard')
+    if request.user.role == User.Roles.STUDENT:
+        return redirect('accounts:student_dashboard')
+    return render(request, 'accounts/dashboard.html')
 
 
 @login_required
@@ -41,7 +56,7 @@ def admin_dashboard(request):
     context = {
         'student_count': User.objects.filter(role=User.Roles.STUDENT).count(),
         'subject_count': Subject.objects.count(),
-        'material_count': StudyMaterial.objects.count(),
+        'material_count': StudyMaterials.objects.count(),
         'assignment_count': Assignment.objects.count(),
         'recent_students': User.objects.filter(role=User.Roles.STUDENT).order_by('-created_at')[:5],
     }
@@ -55,7 +70,7 @@ def student_dashboard(request):
     context = {
         'profile': profile,
         'subject_count': Subject.objects.count(),
-        'material_count': StudyMaterial.objects.count(),
+        'material_count': StudyMaterials.objects.count(),
         'assignment_count': Assignment.objects.count(),
         'submission_count': submissions.count(),
         'recent_assignments': Assignment.objects.order_by('-created_at')[:5],
@@ -78,6 +93,43 @@ def student_list(request):
     students = User.objects.filter(
         role=User.Roles.STUDENT).select_related('student_profile')
     return render(request, 'accounts/student_list.html', {'students': students})
+
+
+@admin_required
+def user_list(request):
+    users = User.objects.all().order_by('role', 'username')
+    return render(request, 'accounts/user_list.html', {'users': users})
+
+
+@admin_required
+def user_create(request):
+    form = UserOnboardingForm(request.POST or None, request.FILES or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.save()
+        messages.success(request, f'{user.get_full_name() or user.username} was onboarded successfully.')
+        return redirect('accounts:user_list')
+    return render(request, 'accounts/user_form.html', {'form': form, 'title': 'Onboard User'})
+
+
+@admin_required
+def user_update(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    form = UserProfileUpdateForm(request.POST or None, request.FILES or None, instance=user)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'User details updated.')
+        return redirect('accounts:user_list')
+    return render(request, 'accounts/user_form.html', {'form': form, 'title': 'Edit User'})
+
+
+@admin_required
+def user_delete(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, 'User deleted.')
+        return redirect('accounts:user_list')
+    return render(request, 'confirm_delete.html', {'object': user, 'cancel_url': 'accounts:user_list'})
 
 
 @admin_required
