@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = [
-#     "django-project-studentsystem.onrender.com",
+#     "django-project-studentsystem.onreinder.com",
 #     "localhost",
 #     "127.0.0.1",
 # ]
